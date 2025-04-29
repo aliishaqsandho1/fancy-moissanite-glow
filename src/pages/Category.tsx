@@ -70,7 +70,9 @@ export default function Category() {
       case "price-high":
         return b.price - a.price;
       case "newest":
-        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+        // Since createdAt doesn't exist in the Product type, we'll use id as a substitute
+        // Assuming newer products have higher IDs
+        return a.id.localeCompare(b.id) * -1;
       default:
         return 0; // featured - no specific sorting
     }
