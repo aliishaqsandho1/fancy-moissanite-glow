@@ -33,10 +33,10 @@ export default function Footer() {
             <h4 className="font-semibold">Shop</h4>
             <ul className="space-y-2">
               <li><Link to="/shop" className="text-muted-foreground hover:text-primary transition-colors">All Products</Link></li>
-              <li><Link to="/shop/rings" className="text-muted-foreground hover:text-primary transition-colors">Rings</Link></li>
-              <li><Link to="/shop/necklaces" className="text-muted-foreground hover:text-primary transition-colors">Necklaces</Link></li>
-              <li><Link to="/shop/earrings" className="text-muted-foreground hover:text-primary transition-colors">Earrings</Link></li>
-              <li><Link to="/shop/bracelets" className="text-muted-foreground hover:text-primary transition-colors">Bracelets</Link></li>
+              <li><Link to="/category/rings" className="text-muted-foreground hover:text-primary transition-colors">Rings</Link></li>
+              <li><Link to="/category/necklaces" className="text-muted-foreground hover:text-primary transition-colors">Necklaces</Link></li>
+              <li><Link to="/category/earrings" className="text-muted-foreground hover:text-primary transition-colors">Earrings</Link></li>
+              <li><Link to="/category/bracelets" className="text-muted-foreground hover:text-primary transition-colors">Bracelets</Link></li>
             </ul>
           </div>
 
@@ -45,9 +45,9 @@ export default function Footer() {
             <h4 className="font-semibold">Help</h4>
             <ul className="space-y-2">
               <li><Link to="/faq" className="text-muted-foreground hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link to="/shipping" className="text-muted-foreground hover:text-primary transition-colors">Shipping Policy</Link></li>
-              <li><Link to="/returns" className="text-muted-foreground hover:text-primary transition-colors">Returns & Exchanges</Link></li>
-              <li><Link to="/care" className="text-muted-foreground hover:text-primary transition-colors">Care Instructions</Link></li>
+              <li><Link to="/policies/shipping" className="text-muted-foreground hover:text-primary transition-colors">Shipping Policy</Link></li>
+              <li><Link to="/policies/returns" className="text-muted-foreground hover:text-primary transition-colors">Returns & Exchanges</Link></li>
+              <li><Link to="/care-instructions" className="text-muted-foreground hover:text-primary transition-colors">Care Instructions</Link></li>
               <li><Link to="/warranty" className="text-muted-foreground hover:text-primary transition-colors">Warranty Information</Link></li>
             </ul>
           </div>
@@ -69,10 +69,10 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} FANCY MOISSANITE. All rights reserved.
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link to="/policies/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link to="/policies/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Terms of Service
             </Link>
           </div>

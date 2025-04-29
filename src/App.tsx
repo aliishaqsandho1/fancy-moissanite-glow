@@ -9,6 +9,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
+import Category from "./pages/Category";
 import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
@@ -22,6 +23,9 @@ import Policies from "./pages/Policies";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ThankYou from "./pages/ThankYou";
+import CareInstructions from "./pages/CareInstructions";
+import Warranty from "./pages/Warranty";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -39,6 +43,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/shop" element={<Shop />} />
+                  <Route path="/category/:categoryId" element={<Category />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/custom" element={<Custom />} />
@@ -48,6 +53,9 @@ const App = () => {
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:id" element={<BlogPost />} />
                   <Route path="/policies/:type" element={<Policies />} />
+                  <Route path="/policies/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/care-instructions" element={<CareInstructions />} />
+                  <Route path="/warranty" element={<Warranty />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/thank-you" element={<ThankYou />} />
