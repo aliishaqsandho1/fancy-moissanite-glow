@@ -1,40 +1,9 @@
+import { Product as ProductType } from '@/types/api';
+import additionalProducts from './additionalProducts';
 
-export type Product = {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  sku: string;
-  moissaniteType: string;
-  moissaniteCut: string;
-  metalType: string;
-  colorVariations: ColorVariation[];
-  sizeOptions: string[];
-  inStock: boolean;
-  images: string[];
-  video?: string;
-  category: string;
-  tags: string[];
-  featured: boolean;
-  reviews: Review[];
-  careInstructions: string;
-  warrantyInfo: string;
-};
+export type Product = ProductType;
 
-export type ColorVariation = {
-  name: string;
-  color: string;
-};
-
-export type Review = {
-  id: string;
-  author: string;
-  rating: number;
-  comment: string;
-  date: string;
-};
-
-const products: Product[] = [
+const originalProducts: Product[] = [
   {
     id: "1",
     title: "Aurora Halo Engagement Ring",
@@ -243,5 +212,8 @@ const products: Product[] = [
     warrantyInfo: "Lifetime warranty against manufacturing defects. 30-day return policy for unworn items."
   }
 ];
+
+// Combine original and additional products
+const products: Product[] = [...originalProducts, ...additionalProducts];
 
 export default products;

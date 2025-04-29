@@ -5,8 +5,21 @@
  * Helper functions for working with API data and state management
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+
+// Throttle function to prevent multiple API calls
+export const throttle = (func: Function, delay: number) => {
+  let lastCall = 0;
+  return function (...args: any[]) {
+    const now = new Date().getTime();
+    if (now - lastCall < delay) {
+      return;
+    }
+    lastCall = now;
+    return func(...args);
+  };
+};
 
 // Generic hook for fetching data from API
 export const useFetch = <T>(
@@ -17,11 +30,54 @@ export const useFetch = <T>(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { toast } = useToast();
+  
+  // Use a ref to track if the component is mounted
+  const isMounted = useRef(true);
 
   useEffect(() => {
+    // Set isMounted to true when the component mounts
+    isMounted.current = true;
+    
     const fetchData = async () => {
       try {
         setLoading(true);
+        const result = await fetchFn();
+        
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          setData(result);
+          setError(null);
+        }
+      } catch (err) {
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+          toast({
+            title: 'Error',
+            description: err instanceof Error ? err.message : 'Failed to fetch data',
+            variant: 'destructive',
+          });
+        }
+      } finally {
+        // Only update state if component is still mounted
+        if (isMounted.current) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+    
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isMounted.current = false;
+    };
+  }, dependencies);
+
+  return { data, loading, error, refetch: async () => {
+    if (isMounted.current) {
+      setLoading(true);
+      try {
         const result = await fetchFn();
         setData(result);
         setError(null);
@@ -35,12 +91,8 @@ export const useFetch = <T>(
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
-  }, dependencies);
-
-  return { data, loading, error };
+    }
+  }};
 };
 
 // Format currency for display
@@ -76,4 +128,22 @@ export const createUrlWithParams = (baseUrl: string, params: Record<string, any>
 export const cleanApiData = <T>(data: any): T => {
   // Add any transformations needed to convert API data to your frontend model
   return data as T;
+};
+
+// Debounce function for input fields (like search)
+export const debounce = <F extends (...args: any[]) => any>(
+  func: F,
+  waitFor: number
+) => {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  const debounced = (...args: Parameters<F>) => {
+    if (timeout !== null) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    timeout = setTimeout(() => func(...args), waitFor);
+  };
+
+  return debounced as (...args: Parameters<F>) => ReturnType<F>;
 };
