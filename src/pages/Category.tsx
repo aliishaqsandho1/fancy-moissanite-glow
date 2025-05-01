@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Slider } from '@/components/ui/slider';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import ProductCard from '@/components/ProductCard';
-import products from '@/data/products';
+import allProducts from '@/data/products';
 
 // Define category titles and descriptions
 const categoryDetails: Record<string, {title: string, description: string}> = {
@@ -40,7 +39,7 @@ export default function Category() {
     : { title: "Collection", description: "Browse our collection" };
 
   // Filter products by category
-  const categoryProducts = products.filter(p => 
+  const categoryProducts = allProducts.filter(p => 
     categoryId ? p.category.toLowerCase() === categoryId.toLowerCase() : true
   );
   
