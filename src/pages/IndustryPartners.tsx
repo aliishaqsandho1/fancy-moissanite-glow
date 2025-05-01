@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HandshakeIcon, Award, Globe, ArrowRight } from 'lucide-react';
+import { Award, Globe, ArrowRight } from 'lucide-react';
 
 const partners = [
   {

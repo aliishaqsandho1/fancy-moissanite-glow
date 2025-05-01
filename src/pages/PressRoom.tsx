@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -360,7 +359,7 @@ const PressReleaseCard = ({ release }) => {
 // Helper function to format dates
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+  return new Date(dateString).toLocaleDateString(undefined, options as Intl.DateTimeFormatOptions);
 };
 
 const Mail = ({ className }) => (
