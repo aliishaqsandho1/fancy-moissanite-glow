@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '@/data/products';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Eye, ArrowsUpDown } from 'lucide-react';
+import { ShoppingCart, Eye, ArrowDownUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Tooltip,
@@ -46,7 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="icon" variant="secondary" className="bg-white/80 backdrop-blur-sm" onClick={handleCompare}>
-                <ArrowsUpDown size={16} />
+                <ArrowDownUp size={16} />
               </Button>
             </TooltipTrigger>
             <TooltipContent>

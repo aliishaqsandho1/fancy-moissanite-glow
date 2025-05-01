@@ -7,6 +7,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { Product, Review } from '@/types/api';
 
 // Throttle function to prevent multiple API calls
 export const throttle = (func: Function, delay: number) => {
@@ -128,6 +129,22 @@ export const createUrlWithParams = (baseUrl: string, params: Record<string, any>
 export const cleanApiData = <T>(data: any): T => {
   // Add any transformations needed to convert API data to your frontend model
   return data as T;
+};
+
+// Ensure product reviews match the required Review type
+export const normalizeProductReviews = (products: Product[]): Product[] => {
+  return products.map(product => {
+    const normalizedReviews = product.reviews.map((review: any) => ({
+      ...review,
+      productId: product.id,
+      verified: review.verified ?? true
+    })) as Review[];
+    
+    return {
+      ...product,
+      reviews: normalizedReviews
+    };
+  });
 };
 
 // Debounce function for input fields (like search)

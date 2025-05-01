@@ -1,9 +1,11 @@
+
 import { Product as ProductType } from '@/types/api';
 import additionalProducts from './additionalProducts';
+import { normalizeProductReviews } from '@/utils/apiUtils';
 
 export type Product = ProductType;
 
-const originalProducts: Product[] = [
+const originalProducts: Omit<Product, 'createdAt' | 'stock'>[] = [
   {
     id: "1",
     title: "Aurora Halo Engagement Ring",
@@ -213,7 +215,14 @@ const originalProducts: Product[] = [
   }
 ];
 
+// Add missing properties to make the products conform to the Product type
+const enhancedOriginalProducts = originalProducts.map(product => ({
+  ...product,
+  createdAt: new Date().toISOString(),
+  stock: Math.floor(Math.random() * 50) + 10
+})) as Product[];
+
 // Combine original and additional products
-const products: Product[] = [...originalProducts, ...additionalProducts];
+const products: Product[] = normalizeProductReviews([...enhancedOriginalProducts, ...additionalProducts]);
 
 export default products;
