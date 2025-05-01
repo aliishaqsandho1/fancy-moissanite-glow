@@ -1,4 +1,3 @@
-
 import { Product as ProductType } from '@/types/api';
 import additionalProducts from './additionalProducts';
 import { normalizeProductReviews } from '@/utils/apiUtils';
@@ -35,7 +34,9 @@ const originalProducts: Omit<Product, 'createdAt' | 'stock'>[] = [
         author: "Alexandra M.",
         rating: 5,
         comment: "The sparkle on this ring is unbelievable! I get compliments everywhere I go.",
-        date: "2023-11-15"
+        date: "2023-11-15",
+        productId: "1",  // Added to match Review type
+        verified: true   // Added to match Review type
       }
     ],
     careInstructions: "Clean with mild soap and warm water. Avoid harsh chemicals and ultrasonic cleaners.",
@@ -69,7 +70,9 @@ const originalProducts: Omit<Product, 'createdAt' | 'stock'>[] = [
         author: "Jessica T.",
         rating: 5,
         comment: "Absolutely stunning! The stone catches light beautifully and the chain is delicate but sturdy.",
-        date: "2023-10-22"
+        date: "2023-10-22",
+        productId: "2",  // Added to match Review type
+        verified: true   // Added to match Review type
       }
     ],
     careInstructions: "Clean with mild soap and warm water. Store separately to prevent scratching.",
@@ -103,7 +106,9 @@ const originalProducts: Omit<Product, 'createdAt' | 'stock'>[] = [
         author: "Michael R.",
         rating: 4,
         comment: "Purchased for my wife's birthday. She loves it and wears it daily. Great quality.",
-        date: "2023-09-18"
+        date: "2023-09-18",
+        productId: "3",  // Added to match Review type
+        verified: true   // Added to match Review type
       }
     ],
     careInstructions: "Clean with mild soap and warm water. Avoid harsh chemicals and ultrasonic cleaners.",
@@ -138,7 +143,9 @@ const originalProducts: Omit<Product, 'createdAt' | 'stock'>[] = [
         author: "Emma L.",
         rating: 5,
         comment: "These earrings are absolutely perfect! They catch the light beautifully and are so comfortable to wear.",
-        date: "2023-12-05"
+        date: "2023-12-05",
+        productId: "4",  // Added to match Review type
+        verified: true   // Added to match Review type
       }
     ],
     careInstructions: "Clean with mild soap and warm water. Store separately to prevent scratching.",
@@ -173,7 +180,9 @@ const originalProducts: Omit<Product, 'createdAt' | 'stock'>[] = [
         author: "Sophia K.",
         rating: 5,
         comment: "This is the perfect wedding band! It pairs beautifully with my engagement ring and the sparkle is unreal.",
-        date: "2023-11-01"
+        date: "2023-11-01",
+        productId: "5",  // Added to match Review type
+        verified: true   // Added to match Review type
       }
     ],
     careInstructions: "Clean with mild soap and warm water. Avoid harsh chemicals and ultrasonic cleaners.",
@@ -207,7 +216,9 @@ const originalProducts: Omit<Product, 'createdAt' | 'stock'>[] = [
         author: "Olivia P.",
         rating: 5,
         comment: "These earrings are stunning and versatile. I love how they catch the light when I move.",
-        date: "2023-10-10"
+        date: "2023-10-10",
+        productId: "6",  // Added to match Review type
+        verified: true   // Added to match Review type
       }
     ],
     careInstructions: "Clean with mild soap and warm water. Store separately to prevent tangling and scratching.",

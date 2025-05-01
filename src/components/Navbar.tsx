@@ -13,6 +13,8 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import CategoryBar from './CategoryBar';
+import SupportMenu from './SupportMenu';
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
@@ -25,6 +27,27 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      {/* Top bar with support, account, etc. */}
+      <div className="border-b border-border">
+        <div className="fancy-container flex items-center justify-between py-2">
+          {/* Left side - announcement */}
+          <div className="text-xs hidden sm:block">
+            <span>Free shipping on orders over $100</span>
+          </div>
+          
+          {/* Right side - support, account */}
+          <div className="flex items-center space-x-1 ml-auto">
+            <SupportMenu />
+            
+            <Button variant="ghost" size="sm" className="h-9">
+              <User size={18} className="sm:mr-1" />
+              <span className="hidden sm:inline">Account</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Main navbar */}
       <nav className="fancy-container flex items-center justify-between py-4">
         {/* Logo */}
         <Link to="/" className="flex items-center">
@@ -193,10 +216,6 @@ export default function Navbar() {
             <Search size={20} />
           </Button>
           
-          <Button variant="ghost" size="icon" className="text-foreground hover:text-primary transition-colors">
-            <User size={20} />
-          </Button>
-          
           <Link to="/cart" className="relative">
             <Button variant="ghost" size="icon" className="text-foreground hover:text-primary transition-colors">
               <ShoppingCart size={20} />
@@ -214,6 +233,9 @@ export default function Navbar() {
         </div>
       </nav>
 
+      {/* Category Bar (not shown on mobile) */}
+      <CategoryBar />
+      
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-border animate-fade-in">
