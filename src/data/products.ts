@@ -1,5 +1,7 @@
+
 import { Product as ProductType } from '@/types/api';
 import additionalProducts from './additionalProducts';
+import moreProducts from './moreProducts';
 import { normalizeProductReviews } from '@/utils/apiUtils';
 
 export type Product = ProductType;
@@ -233,7 +235,7 @@ const enhancedOriginalProducts = originalProducts.map(product => ({
   stock: Math.floor(Math.random() * 50) + 10
 })) as Product[];
 
-// Combine original and additional products
-const products: Product[] = normalizeProductReviews([...enhancedOriginalProducts, ...additionalProducts]);
+// Combine original, additional and more products
+const products: Product[] = normalizeProductReviews([...enhancedOriginalProducts, ...additionalProducts, ...moreProducts]);
 
 export default products;
