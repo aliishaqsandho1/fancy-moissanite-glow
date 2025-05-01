@@ -1,4 +1,3 @@
-
 import { Product } from "@/types/api";
 import products from "./products";
 
@@ -148,7 +147,7 @@ export const supportOptions: SupportOption[] = [
 export const getProductsByCategory = (categorySlug: string): Product[] => {
   return products.filter(product => 
     product.category.toLowerCase() === categorySlug.toLowerCase() || 
-    product.tags.includes(categorySlug.toLowerCase())
+    (product.tags && product.tags.includes(categorySlug.toLowerCase()))
   );
 };
 
@@ -156,4 +155,3 @@ export const getProductsByCategory = (categorySlug: string): Product[] => {
 export const getFeaturedProducts = (): Product[] => {
   return products.filter(product => product.featured);
 };
-

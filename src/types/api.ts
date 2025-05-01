@@ -1,4 +1,3 @@
-
 /**
  * This file contains TypeScript interfaces that define the expected structure
  * of API responses for the Fancy Moissanite e-commerce platform.
@@ -30,6 +29,8 @@ export interface Product {
   careInstructions: string;
   warrantyInfo: string;
   reviews: Review[];
+  tags?: string[]; // Added tags as optional property
+  inStock?: boolean; // Added inStock as optional property
 }
 
 export interface Review {
