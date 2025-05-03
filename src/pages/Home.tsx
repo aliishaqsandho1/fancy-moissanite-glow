@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ShoppingBag, Award, Clock, ChevronRight } from 'lucide-react';
@@ -12,13 +11,37 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { getFeaturedProducts, getNewArrivals, getPopularProducts, getProducts, getTestimonials } from '@/data/siteData';
+import { getFeaturedProducts, getNewArrivals } from '@/data/siteData';
 
 export default function Home() {
   const featuredProducts = getFeaturedProducts(3);
   const newArrivals = getNewArrivals(4);
-  const popularProducts = getPopularProducts(6);
-  const testimonials = getTestimonials(3);
+  // Use featured products for popular products as well, since getPopularProducts is not available
+  const popularProducts = getFeaturedProducts(6);
+  // Use mock testimonials data since getTestimonials is not available
+  const testimonials = [
+    {
+      id: '1',
+      author: 'Sarah Johnson',
+      rating: 5,
+      comment: 'I absolutely love my moissanite engagement ring! The sparkle is incredible and nobody can tell it's not a diamond. Amazing quality for the price.',
+      image: 'https://randomuser.me/api/portraits/women/12.jpg'
+    },
+    {
+      id: '2',
+      author: 'Michael Brown',
+      rating: 5,
+      comment: 'Purchased a pair of earrings for my wife's birthday. She was thrilled with the quality and brilliance. Great customer service too!',
+      image: 'https://randomuser.me/api/portraits/men/32.jpg'
+    },
+    {
+      id: '3',
+      author: 'Jessica Williams',
+      rating: 4,
+      comment: 'The custom necklace I ordered exceeded my expectations. Beautiful craftsmanship and it arrived faster than I expected.',
+      image: 'https://randomuser.me/api/portraits/women/45.jpg'
+    }
+  ];
   
   return (
     <div>
