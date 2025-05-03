@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Gift, CircleHeart, Diamond, Gem, Users, Heart, Medal, Sparkles, User } from 'lucide-react';
+import { Gift, Heart, Diamond, Gem, Users, Medal, Sparkles, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { categories } from '@/data/siteData';
 
@@ -35,7 +35,7 @@ export default function CategoryBar({ activeCategory, className, vertical = fals
       case 'gifts':
         return <Gift className="mr-2 h-4 w-4" />;
       case 'rings':
-        return <CircleHeart className="mr-2 h-4 w-4" />;
+        return <Heart className="mr-2 h-4 w-4" />; // Changed from CircleHeart to Heart
       case 'wedding':
         return <Diamond className="mr-2 h-4 w-4" />;
       case 'engagement':
