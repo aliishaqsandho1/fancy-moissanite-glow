@@ -614,8 +614,13 @@ export const categories = [
   }
 ];
 
-// Export supportOptions
-export { supportOptions } from '@/data/products';
+// Define support options here instead of importing from products
+export const supportOptions = [
+  { id: 1, name: "Shipping Information", link: "/shipping-info" },
+  { id: 2, name: "Returns & Exchanges", link: "/policies" },
+  { id: 3, name: "Sizing Guide", link: "/sizing-guide" },
+  { id: 4, name: "Care Instructions", link: "/care-instructions" }
+];
 
 // Import and re-export all product-related functions
 import allProducts from '@/data/products';

@@ -1,107 +1,92 @@
 
-import { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { categories } from '@/data/siteData';
+import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { categories } from '@/data/siteData';
 
-export default function CategoryBar() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const isMobile = useIsMobile();
+// Define a complete category interface that works with our data
+interface Category {
+  slug: string;
+  name: string;
+  description: string;
+  id?: string;
+  bannerImage?: string;
+  subcategories?: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    image: string;
+  }>;
+}
 
-  const handleMouseEnter = (categoryId: string) => {
-    setActiveCategory(categoryId);
-  };
+interface CategoryBarProps {
+  activeCategory?: string;
+  className?: string;
+}
 
-  const handleMouseLeave = () => {
-    setActiveCategory(null);
-  };
-
-  if (isMobile) return null; // Don't render on mobile, will be in mobile menu instead
-
+export default function CategoryBar({ activeCategory, className }: CategoryBarProps) {
+  // Cast our categories to match the expected interface
+  const allCategories = categories as Category[];
+  
   return (
-    <div className="category-bar-container bg-background/95 backdrop-blur-md border-b border-border">
-      <div className="fancy-container">
-        {/* Category Navigation */}
-        <nav className="relative" onMouseLeave={handleMouseLeave}>
-          {/* Top level categories */}
-          <ul className="flex items-center justify-center space-x-8 py-3">
-            {categories.map((category) => (
-              <li key={category.id} className="relative" onMouseEnter={() => handleMouseEnter(category.id)}>
-                <Link 
-                  to={`/category/${category.slug}`} 
-                  className={cn(
-                    "text-sm font-medium py-2 border-b-2 border-transparent transition-colors", 
-                    activeCategory === category.id ? "text-primary border-primary" : "hover:text-primary"
-                  )}
-                >
-                  {category.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {/* Mega Menu Dropdown */}
-          {activeCategory && (
-            <div 
-              className="absolute left-0 w-full z-50 bg-background border-b border-border shadow-lg animate-in fade-in-5 duration-100 ease-in-out"
-              onMouseLeave={handleMouseLeave}
-            >
-              {categories
-                .filter(category => category.id === activeCategory)
-                .map((category) => (
-                  <div key={category.id} className="grid grid-cols-4 gap-6 p-6">
-                    {/* Banner Image */}
-                    <div className="col-span-1">
-                      <div className="aspect-[4/3] overflow-hidden rounded-lg relative">
-                        <img 
-                          src={category.bannerImage} 
-                          alt={category.name} 
-                          className="object-cover w-full h-full"
-                        />
-                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                          <Link 
-                            to={`/category/${category.slug}`} 
-                            className="bg-background/80 backdrop-blur-sm text-foreground font-medium px-4 py-2 rounded hover:bg-primary hover:text-primary-foreground transition-colors"
-                          >
-                            View All {category.name}
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Subcategories */}
-                    <div className="col-span-3 grid grid-cols-3 gap-8">
-                      {category.subcategories.map((subcategory) => (
-                        <Link 
-                          key={subcategory.id} 
-                          to={`/category/${category.slug}/${subcategory.slug}`}
-                          className="group"
-                        >
-                          <div className="aspect-square overflow-hidden rounded-lg mb-2">
-                            <img 
-                              src={subcategory.image || category.image} 
-                              alt={subcategory.name} 
-                              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                            />
-                          </div>
-                          <h3 className="text-sm font-medium group-hover:text-primary transition-colors">
-                            {subcategory.name}
-                          </h3>
-                          {subcategory.description && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {subcategory.description}
-                            </p>
-                          )}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-            </div>
+    <div className={cn("overflow-x-auto", className)}>
+      <div className="flex min-w-max gap-1 p-1">
+        <Link
+          to="/shop"
+          className={cn(
+            "whitespace-nowrap rounded-full px-3 py-1 text-sm transition-colors",
+            !activeCategory
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary/50 hover:bg-secondary/80"
           )}
-        </nav>
+        >
+          All Items
+        </Link>
+        
+        {allCategories.map((category) => (
+          <Link
+            key={category.slug}
+            to={`/category/${category.slug}`}
+            className={cn(
+              "whitespace-nowrap rounded-full px-3 py-1 text-sm transition-colors",
+              activeCategory === category.slug
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary/50 hover:bg-secondary/80"
+            )}
+          >
+            {category.name}
+          </Link>
+        ))}
       </div>
+      
+      {/* Optional: Banner for active category */}
+      {activeCategory && allCategories.find(c => c.slug === activeCategory)?.bannerImage && (
+        <div className="mt-4 relative h-40 rounded-lg overflow-hidden">
+          <img
+            src={allCategories.find(c => c.slug === activeCategory)?.bannerImage}
+            alt={allCategories.find(c => c.slug === activeCategory)?.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+            <h2 className="text-2xl font-bold text-white">{allCategories.find(c => c.slug === activeCategory)?.name}</h2>
+          </div>
+        </div>
+      )}
+      
+      {/* Optional: Subcategories for active category */}
+      {activeCategory && allCategories.find(c => c.slug === activeCategory)?.subcategories && (
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {allCategories.find(c => c.slug === activeCategory)?.subcategories?.map(sub => (
+            <Link key={sub.id} to={`/category/${activeCategory}/${sub.slug}`} className="group">
+              <div className="aspect-square rounded-lg overflow-hidden bg-secondary/50">
+                {sub.image && <img src={sub.image} alt={sub.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />}
+              </div>
+              <p className="mt-2 text-sm font-medium text-center">{sub.name}</p>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
@@ -21,7 +20,33 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from "@/hooks/use-toast";
 import { getProductById, getRelatedProducts } from '@/data/siteData';
 import { Product } from '@/types/api';
-import ProductCard from '@/components/ProductCard'; // Make sure this import is correct
+import ProductCard from '@/components/ProductCard';
+
+// Extend the Product type with additional properties we need
+interface ExtendedProduct extends Product {
+  name: string;
+  description: string;
+  images: string[];
+  price: number;
+  rating: number;
+  reviews: {
+    rating: number;
+    title: string;
+    content: string;
+    author: string;
+    date: string;
+  }[];
+  soldCount: number;
+  compareAtPrice?: number;
+  isNew: boolean;
+  metalType: string;
+  stoneSize?: string;
+  stoneCut?: string;
+  bandWidth?: string;
+  longDescription?: string;
+  accentStones?: string;
+  category: string;
+}
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -29,8 +54,8 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
   
-  // Get product data
-  const product = getProductById(id || '');
+  // Get product data and cast to ExtendedProduct
+  const product = getProductById(id || '') as ExtendedProduct | undefined;
   
   // Get related products
   const relatedProducts = getRelatedProducts(id || '', 4);
@@ -413,7 +438,7 @@ export default function ProductDetail() {
           <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product as ExtendedProduct} />
             ))}
           </div>
         </div>
