@@ -1,8 +1,9 @@
+
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ShoppingBag, Award, Clock, ChevronRight } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
-import CategoryBar from '@/components/CategoryBar';
+import products from '@/data/products';
 import { 
   Card,
   CardContent,
@@ -11,73 +12,65 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { getFeaturedProducts, getNewArrivals } from '@/data/siteData';
 
 export default function Home() {
-  const featuredProducts = getFeaturedProducts(3);
-  const newArrivals = getNewArrivals(4);
-  // Use featured products for popular products as well, since getPopularProducts is not available
-  const popularProducts = getFeaturedProducts(6);
-  // Use mock testimonials data since getTestimonials is not available
+  const featuredProducts = products.filter(product => product.featured).slice(0, 3);
+  const newArrivals = products.slice(0, 4);
   const testimonials = [
     {
-      id: '1',
-      author: 'Sarah Johnson',
+      id: 1,
+      author: "Sophia Martinez",
+      comment: "The brilliance of my moissanite ring surpasses any diamond I've ever seen. Everyone asks where I got it!",
       rating: 5,
-      comment: "I absolutely love my moissanite engagement ring! The sparkle is incredible and nobody can tell it is not a diamond. Amazing quality for the price.",
-      image: 'https://randomuser.me/api/portraits/women/12.jpg'
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
     },
     {
-      id: '2',
-      author: 'Michael Brown',
+      id: 2,
+      author: "James Wilson",
+      comment: "I was skeptical about moissanite, but after seeing it in person, I'm a complete convert. Stunning brilliance!",
       rating: 5,
-      comment: "Purchased a pair of earrings for my wife's birthday. She was thrilled with the quality and brilliance. Great customer service too!",
-      image: 'https://randomuser.me/api/portraits/men/32.jpg'
+      image: "https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
     },
     {
-      id: '3',
-      author: 'Jessica Williams',
+      id: 3,
+      author: "Emily Chen",
+      comment: "The custom design process was so easy, and the final piece exceeded my expectations. Worth every penny!",
       rating: 4,
-      comment: "The custom necklace I ordered exceeded my expectations. Beautiful craftsmanship and it arrived faster than I expected.",
-      image: 'https://randomuser.me/api/portraits/women/45.jpg'
+      image: "https://images.unsplash.com/photo-1554727242-741c14fa561c?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
     }
   ];
   
   return (
     <div>
-      {/* Featured Banner Section with CategoryBar */}
-      <section className="py-6">
-        <div className="fancy-container grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Vertical CategoryBar */}
-          <div className="lg:col-span-3">
-            <CategoryBar vertical={true} className="h-full" />
-          </div>
-          
-          {/* Main Banner */}
-          <div className="lg:col-span-9 bg-stone-50 rounded-lg overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
-              <div className="flex flex-col justify-center p-8">
-                <h2 className="text-xl text-gray-500 mb-1">PERFECT GIFTS</h2>
-                <p className="text-sm mb-2">British & European Tastes</p>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">JEWELLERY DESIGNED FOR<br/>YOUR SPECIAL MOMENTS</h1>
-                <Button asChild variant="outline" className="rounded-none w-fit border-black text-black hover:bg-black hover:text-white">
-                  <Link to="/shop">Shop now</Link>
-                </Button>
-              </div>
-              <div className="hidden lg:block relative h-full">
-                <img
-                  src="/lovable-uploads/06733140-3eaf-4d43-996b-e89f6205344a.png"
-                  alt="Featured jewelry"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </div>
+      {/* Hero Section */}
+      <section className="relative h-[80vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2574&q=80"
+            alt="Luxury Jewelry"
+            className="w-full h-full object-cover brightness-75"
+          />
+        </div>
+        <div className="fancy-container relative z-10 text-white">
+          <div className="max-w-2xl animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">Futuristic Elegance</h1>
+            <p className="text-lg md:text-xl mb-8">
+              Experience the brilliance of moissanite jewelry designed for the modern era
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
+                <Link to="/shop">Explore Collection</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white/20">
+                <Link to="/custom">Custom Designs</Link>
+              </Button>
             </div>
           </div>
         </div>
       </section>
-      
+
       {/* Features Section */}
-      <section className="py-16 bg-secondary/30">
+      <section className="py-20 bg-secondary/30">
         <div className="fancy-container">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center text-center p-6">
@@ -112,7 +105,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products Section */}
-      <section className="py-16">
+      <section className="py-20">
         <div className="fancy-container">
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
             <div>
@@ -135,7 +128,7 @@ export default function Home() {
       </section>
 
       {/* New Arrivals Section */}
-      <section className="py-16 bg-secondary/30">
+      <section className="py-20 bg-secondary/30">
         <div className="fancy-container">
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
             <div>
@@ -157,31 +150,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Popular Products Section - New Section */}
-      <section className="py-16">
-        <div className="fancy-container">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-12">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Most Popular</h2>
-              <p className="text-muted-foreground">Discover what our customers love the most</p>
-            </div>
-            <Button asChild variant="outline" className="mt-4 md:mt-0">
-              <Link to="/shop" className="flex items-center gap-2">
-                View All <ArrowRight size={16} />
-              </Link>
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {popularProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* About Section */}
-      <section className="py-16">
+      <section className="py-20">
         <div className="fancy-container grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-4">Future of Jewelry</h2>
@@ -198,7 +168,7 @@ export default function Home() {
           <div className="relative">
             <div className="rounded-lg overflow-hidden gold-glow">
               <img
-                src="https://images.unsplash.com/photo-1600721391689-2564bb8055de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
+                src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8ZGlhbW9uZCUyMG5lY2tsYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60"
                 alt="Jewelry craftsmanship"
                 className="w-full h-full object-cover"
               />
@@ -209,7 +179,7 @@ export default function Home() {
       </section>
 
       {/* Collection Categories */}
-      <section className="py-16 bg-secondary/30">
+      <section className="py-20 bg-secondary/30">
         <div className="fancy-container">
           <h2 className="text-3xl font-bold text-center mb-12">Shop By Category</h2>
           
@@ -241,7 +211,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16">
+      <section className="py-20">
         <div className="fancy-container">
           <h2 className="text-3xl font-bold text-center mb-2">What Our Customers Say</h2>
           <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-12">
@@ -290,7 +260,7 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-16 bg-secondary/30">
+      <section className="py-20 bg-secondary/30">
         <div className="fancy-container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl font-bold mb-4">Why Choose Moissanite?</h2>
@@ -346,7 +316,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16">
+      <section className="py-20">
         <div className="fancy-container text-center max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Design Your Perfect Piece</h2>
           <p className="text-lg mb-8">
