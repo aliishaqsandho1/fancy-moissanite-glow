@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { categories } from '@/data/siteData';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Define a complete category interface that works with our data
 interface Category {
@@ -30,21 +31,23 @@ export default function CategoryBar({ activeCategory, className, vertical = fals
   // Cast our categories to match the expected interface
   const allCategories = categories as Category[];
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+  const isMobile = useIsMobile();
   
   return (
     <div className={cn("relative", className)}>
       {/* Main navigation */}
       <div className={cn(
         "bg-gradient-to-r from-primary/5 to-secondary/30 backdrop-blur-sm border border-primary/10 rounded-xl shadow-lg",
-        vertical ? "p-4" : "p-2"
+        vertical ? "p-4" : "p-2 z-10"
       )}>
         <div className={cn(
-          vertical ? "flex flex-col gap-2 p-1" : "flex min-w-max gap-1 p-1 overflow-x-auto"
+          vertical ? "flex flex-col gap-2 p-1" : "flex gap-1 p-1 overflow-x-auto scrollbar-hide",
+          !vertical && "flex-nowrap md:flex-wrap"
         )}>
           <Link
             to="/shop"
             className={cn(
-              "whitespace-nowrap rounded-lg flex items-center gap-1.5 transition-colors",
+              "whitespace-nowrap rounded-lg flex items-center gap-1.5 transition-colors flex-shrink-0",
               vertical ? "px-4 py-2.5 text-base" : "px-3 py-1.5 text-sm",
               !activeCategory
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
@@ -61,14 +64,14 @@ export default function CategoryBar({ activeCategory, className, vertical = fals
               key={category.slug}
               to={`/category/${category.slug}`}
               className={cn(
-                "whitespace-nowrap rounded-lg flex items-center gap-1.5 group transition-all",
+                "whitespace-nowrap rounded-lg flex items-center gap-1.5 group transition-all flex-shrink-0",
                 vertical ? "px-4 py-2.5 text-base" : "px-3 py-1.5 text-sm",
                 activeCategory === category.slug
                   ? "bg-primary text-primary-foreground hover:bg-primary/90"
                   : "bg-card/70 hover:bg-secondary/90 backdrop-blur-sm border border-primary/10"
               )}
               onMouseEnter={() => setHoveredCategory(category.slug)}
-              onMouseLeave={() => setHoveredCategory(null)}
+              onMouseLeave={() => isMobile ? null : setHoveredCategory(null)}
             >
               <span>{category.name}</span>
               {vertical && (
@@ -88,7 +91,7 @@ export default function CategoryBar({ activeCategory, className, vertical = fals
       </div>
       
       {/* Category preview on hover - Only show when not in vertical mode */}
-      {!vertical && hoveredCategory && (
+      {!vertical && hoveredCategory && !isMobile && (
         <div 
           className="absolute left-0 right-0 mt-3 bg-card/95 backdrop-blur-md rounded-xl shadow-xl border border-primary/10 overflow-hidden transition-opacity z-20" 
           onMouseEnter={() => setHoveredCategory(hoveredCategory)}
@@ -153,6 +156,24 @@ export default function CategoryBar({ activeCategory, className, vertical = fals
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      
+      {/* Mobile category view */}
+      {!vertical && hoveredCategory && isMobile && (
+        <div className="mt-3 bg-card/95 backdrop-blur-md rounded-xl shadow-xl border border-primary/10 overflow-hidden">
+          <div className="p-4">
+            <h3 className="text-lg font-bold mb-2">
+              {allCategories.find(c => c.slug === hoveredCategory)?.name}
+            </h3>
+            <Link 
+              to={`/category/${hoveredCategory}`}
+              className="text-primary hover:text-primary/80 flex items-center group"
+            >
+              <span>View all products</span>
+              <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
         </div>
       )}

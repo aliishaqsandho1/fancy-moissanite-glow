@@ -23,6 +23,7 @@ export default function Cart() {
   ]);
   const [promoCode, setPromoCode] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
+  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
   
   // Get product details from product ID
   const getProductFromId = (id: string) => {
@@ -62,6 +63,14 @@ export default function Cart() {
         item.productId === productId ? { ...item, quantity: newQuantity } : item
       )
     );
+  };
+  
+  // Direct quantity update
+  const handleQuantityChange = (productId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value > 0) {
+      updateQuantity(productId, value);
+    }
   };
   
   // Remove item from cart
@@ -129,7 +138,11 @@ export default function Cart() {
                     return (
                       <tr key={item.productId} className="bg-background">
                         <td className="p-4">
-                          <div className="flex items-center gap-4">
+                          <div 
+                            className="flex items-center gap-4 relative"
+                            onMouseEnter={() => setHoveredProduct(item.productId)}
+                            onMouseLeave={() => setHoveredProduct(null)}
+                          >
                             <div className="w-16 h-16 rounded-md overflow-hidden hidden sm:block">
                               <img 
                                 src={product.images[0]} 
@@ -151,6 +164,68 @@ export default function Cart() {
                                 {formatPrice(product.price)}
                               </p>
                             </div>
+                            
+                            {/* Product details on hover */}
+                            {hoveredProduct === item.productId && (
+                              <div className="absolute left-0 top-full mt-2 z-30 bg-card/95 backdrop-blur-md p-4 rounded-lg shadow-lg border border-primary/10 w-64">
+                                <div className="flex gap-3">
+                                  <div className="w-20 h-20 rounded-md overflow-hidden">
+                                    <img 
+                                      src={product.images.length > 1 ? product.images[1] : product.images[0]} 
+                                      alt={product.title} 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-medium text-sm">{product.title}</h4>
+                                    <p className="text-xs text-primary font-medium mt-1">{formatPrice(product.price)}</p>
+                                    <div className="text-xs text-muted-foreground mt-2">
+                                      {product.description && (
+                                        <p className="line-clamp-2">{product.description}</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* Product variations */}
+                                <div className="mt-3 border-t border-border pt-2">
+                                  {product.colorOptions && product.colorOptions.length > 0 && (
+                                    <div className="mb-2">
+                                      <p className="text-xs font-medium mb-1">Colors:</p>
+                                      <div className="flex flex-wrap gap-1">
+                                        {product.colorOptions.map((color, index) => (
+                                          <div 
+                                            key={index} 
+                                            className={`w-5 h-5 rounded-full border ${
+                                              item.color === color ? 'border-primary ring-1 ring-primary' : 'border-border'
+                                            }`}
+                                            style={{ backgroundColor: color.toLowerCase().replace(' gold', '') }}
+                                          />
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  
+                                  {product.sizeOptions && product.sizeOptions.length > 0 && (
+                                    <div>
+                                      <p className="text-xs font-medium mb-1">Sizes:</p>
+                                      <div className="flex flex-wrap gap-1">
+                                        {product.sizeOptions.map((size, index) => (
+                                          <div 
+                                            key={index} 
+                                            className={`px-2 py-1 text-xs rounded border ${
+                                              item.size === size ? 'bg-primary/10 border-primary text-primary' : 'border-border'
+                                            }`}
+                                          >
+                                            {size}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </td>
                         <td className="p-4 text-center hidden md:table-cell">
@@ -166,7 +241,13 @@ export default function Cart() {
                             >
                               <Minus size={14} />
                             </Button>
-                            <span className="w-8 text-center">{item.quantity}</span>
+                            <Input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => handleQuantityChange(item.productId, e)}
+                              className="w-14 text-center h-8 p-0"
+                            />
                             <Button 
                               variant="outline" 
                               size="icon" 
@@ -208,7 +289,7 @@ export default function Cart() {
           
           {/* Order Summary */}
           <div>
-            <div className="bg-secondary/30 rounded-lg p-6">
+            <div className="bg-secondary/30 rounded-lg p-6 sticky top-24">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
               
               <div className="space-y-3 mb-6">

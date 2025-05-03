@@ -130,6 +130,16 @@
   }
 }
 
+/* Hide scrollbars for better UX */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
 /* Animation utilities */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out;
@@ -185,3 +195,32 @@
 .gold-highlight {
   @apply text-gold;
 }
+
+/* Z-index management */
+.z-nav {
+  z-index: 50;
+}
+
+.z-dropdown {
+  z-index: 40;
+}
+
+.z-popover {
+  z-index: 30;
+}
+
+.z-modal {
+  z-index: 100;
+}
+
+/* Responsive fixes */
+@media (max-width: 640px) {
+  .responsive-padding {
+    @apply px-3 py-2;
+  }
+  
+  .responsive-text {
+    @apply text-sm;
+  }
+}
+
