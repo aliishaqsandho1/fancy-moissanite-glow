@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import ProductCard from '@/components/ProductCard';
-import allProducts from '@/data/products';
-import { categories } from '@/data/siteData';
+import { categories, allProducts } from '@/data/siteData';
 
 export default function Category() {
   const { categoryId } = useParams<{ categoryId: string }>();

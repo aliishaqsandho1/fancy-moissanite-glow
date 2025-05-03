@@ -1,7 +1,4 @@
 
-import { Product } from "@/types/api";
-import allProducts, { getFeaturedProducts, getProductsByCategory } from "./products";
-
 // Main site information
 export const siteInfo = {
   name: "Fancy Moissanite",
@@ -593,8 +590,35 @@ export const blogPosts = [
   }
 ];
 
-// Store the categories from site data
-export { categories, supportOptions } from './siteData';
+// Define product categories
+export const categories = [
+  {
+    slug: "rings",
+    name: "Rings",
+    description: "Stunning moissanite rings for every occasion, from everyday elegance to special moments."
+  },
+  {
+    slug: "necklaces",
+    name: "Necklaces",
+    description: "Beautiful pendants and necklaces that showcase the brilliance of moissanite."
+  },
+  {
+    slug: "earrings",
+    name: "Earrings",
+    description: "Dazzling moissanite earrings from subtle studs to statement drops."
+  },
+  {
+    slug: "bracelets",
+    name: "Bracelets",
+    description: "Elegant moissanite bracelets that add sparkle to your wrist."
+  }
+];
 
-// Product related helpers
-export { allProducts, getProductById, getProductsByCategory, getFeaturedProducts, getNewArrivals };
+// Export supportOptions
+export { supportOptions } from '@/data/products';
+
+// Import and re-export all product-related functions
+import allProducts from '@/data/products';
+import { getProductById, getProductsByCategory, getFeaturedProducts, getRelatedProducts, getNewArrivals } from '@/data/products';
+
+export { allProducts, getProductById, getProductsByCategory, getFeaturedProducts, getRelatedProducts, getNewArrivals };

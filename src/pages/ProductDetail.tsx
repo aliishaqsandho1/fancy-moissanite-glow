@@ -1,536 +1,419 @@
 
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { 
+  Minus, 
+  Plus, 
+  Heart, 
+  Share, 
+  ShoppingCart, 
+  Check, 
+  ChevronRight,
+  Star,
+  StarHalf,
+  ShieldCheck
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Heart, ArrowLeft, Star, ShoppingCart, Share, Info, Shield, Award, RotateCcw, CircleDot } from 'lucide-react';
-import { getProductById, getRelatedProducts } from '@/data/products';
-import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from "@/hooks/use-toast";
+import { getProductById, getRelatedProducts } from '@/data/siteData';
+import { Product } from '@/types/api';
+import ProductCard from '@/components/ProductCard'; // Make sure this import is correct
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
+  const [activeImage, setActiveImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
   
-  const product = getProductById(id || "");
+  // Get product data
+  const product = getProductById(id || '');
   
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(product?.colorVariations[0]?.name || '');
-  const [selectedSize, setSelectedSize] = useState(product?.sizeOptions[0] || '');
-  const [quantity, setQuantity] = useState(1);
-
+  // Get related products
+  const relatedProducts = getRelatedProducts(id || '', 4);
+  
   if (!product) {
     return (
-      <div className="fancy-container py-16 text-center">
-        <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
-        <p className="mb-8">Sorry, the product you're looking for doesn't exist.</p>
+      <div className="fancy-container py-20 text-center">
+        <h1 className="text-2xl font-semibold mb-4">Product Not Found</h1>
+        <p className="mb-8">We couldn't find the product you were looking for.</p>
         <Button asChild>
-          <Link to="/shop">Return to Shop</Link>
+          <Link to="/shop">Continue Shopping</Link>
         </Button>
       </div>
     );
   }
-
-  const relatedProducts = getRelatedProducts(product.id, 4);
-
+  
   const handleAddToCart = () => {
     toast({
-      title: "Added to Cart",
-      description: `${product.title} (${selectedColor}, Size ${selectedSize}) has been added to your cart.`,
+      title: "Added to cart",
+      description: `${product.name} (Qty: ${quantity}) has been added to your cart.`,
     });
   };
-
+  
   const handleAddToWishlist = () => {
     toast({
-      title: "Added to Wishlist",
-      description: `${product.title} has been added to your wishlist.`,
+      title: "Added to wishlist",
+      description: `${product.name} has been added to your wishlist.`,
     });
   };
-
-  const averageRating = product.reviews.length > 0
-    ? product.reviews.reduce((total, review) => total + review.rating, 0) / product.reviews.length
-    : 0;
-
+  
+  const decrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+  
+  const incrementQuantity = () => {
+    setQuantity(quantity + 1);
+  };
+  
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={`star-${i}`} className="fill-primary text-primary w-4 h-4" />);
+    }
+    
+    if (hasHalfStar) {
+      stars.push(<StarHalf key="half-star" className="fill-primary text-primary w-4 h-4" />);
+    }
+    
+    const emptyStars = 5 - stars.length;
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<Star key={`empty-star-${i}`} className="text-gray-300 w-4 h-4" />);
+    }
+    
+    return stars;
+  };
+  
   return (
-    <div className="fancy-container py-12">
-      {/* Back Button */}
-      <Button variant="ghost" asChild className="mb-6 group">
-        <Link to="/shop" className="flex items-center gap-2 text-muted-foreground hover:text-gold transition-colors">
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-          <span>Back to Collection</span>
+    <div className="fancy-container py-10">
+      {/* Breadcrumb */}
+      <div className="flex items-center text-sm text-muted-foreground mb-6">
+        <Link to="/" className="hover:text-primary">Home</Link>
+        <ChevronRight className="w-4 h-4 mx-2" />
+        <Link to="/shop" className="hover:text-primary">Shop</Link>
+        <ChevronRight className="w-4 h-4 mx-2" />
+        <Link 
+          to={`/category/${product.category.toLowerCase()}`} 
+          className="hover:text-primary"
+        >
+          {product.category}
         </Link>
-      </Button>
+        <ChevronRight className="w-4 h-4 mx-2" />
+        <span className="text-foreground">{product.name}</span>
+      </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
         {/* Product Images */}
-        <div className="space-y-6">
-          <div className="aspect-square rounded-xl overflow-hidden futuristic-panel p-1">
-            <div className="w-full h-full relative">
-              <img
-                src={product.images[selectedImage]}
-                alt={product.title}
-                className="w-full h-full object-cover rounded-lg"
-              />
-              {product.featured && (
-                <div className="absolute top-4 right-4 bg-gradient-gold px-3 py-1 rounded-full text-xs font-semibold text-black">
-                  Featured
-                </div>
-              )}
-            </div>
+        <div>
+          <div className="bg-secondary/20 rounded-lg overflow-hidden mb-4 aspect-square">
+            <img 
+              src={product.images[activeImage]} 
+              alt={product.name}
+              className="w-full h-full object-contain"
+            />
           </div>
-          <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
-            {product.images.map((image, idx) => (
+          
+          <div className="grid grid-cols-4 gap-2">
+            {product.images.map((image, index) => (
               <button
-                key={idx}
-                className={`w-24 h-24 rounded-md overflow-hidden flex-shrink-0 transition-all snap-start ${
-                  selectedImage === idx 
-                    ? 'ring-2 ring-gold ring-offset-2 scale-105' 
-                    : 'opacity-70 hover:opacity-100'
+                key={index}
+                onClick={() => setActiveImage(index)}
+                className={`bg-secondary/20 rounded-lg overflow-hidden aspect-square ${
+                  activeImage === index ? 'ring-2 ring-primary' : ''
                 }`}
-                onClick={() => setSelectedImage(idx)}
               >
-                <img src={image} alt={`${product.title} thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                <img 
+                  src={image} 
+                  alt={`${product.name} view ${index + 1}`}
+                  className="w-full h-full object-contain"
+                />
               </button>
             ))}
           </div>
         </div>
         
-        {/* Product Info */}
+        {/* Product Details */}
         <div>
-          <div className="gold-glass-panel p-8 rounded-xl mb-8">
-            <div className="mb-6">
-              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
-                <span>{product.category}</span>
-                <span>•</span>
-                <span>SKU: {product.sku}</span>
-                {product.inStock !== false ? (
-                  <span className="ml-auto text-emerald-600 flex items-center gap-1">
-                    <CircleDot size={14} />
-                    In Stock
-                  </span>
-                ) : (
-                  <span className="ml-auto text-red-500 flex items-center gap-1">
-                    <CircleDot size={14} />
-                    Out of Stock
-                  </span>
-                )}
+          <div className="mb-4">
+            {product.isNew && (
+              <Badge className="mb-2">New Arrival</Badge>
+            )}
+            <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+            <div className="flex items-center gap-4 mb-2">
+              <div className="flex items-center">
+                {renderStars(product.rating)}
+                <span className="ml-2 text-sm text-muted-foreground">
+                  ({product.reviews.length} reviews)
+                </span>
               </div>
-              
-              <h1 className="text-3xl font-bold mb-2 shimmer-text">{product.title}</h1>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star 
-                      key={star}
-                      size={16}
-                      fill={averageRating >= star ? "#D4AF37" : "none"}
-                      className="text-gold"
-                    />
-                  ))}
-                </div>
-                <span className="text-sm">{product.reviews.length} {product.reviews.length === 1 ? 'review' : 'reviews'}</span>
-              </div>
-              
-              <p className="text-3xl font-bold text-gold">${product.price.toLocaleString()}</p>
+              <Separator orientation="vertical" className="h-5" />
+              <span className="text-sm text-muted-foreground">
+                {product.soldCount}+ sold
+              </span>
             </div>
-            
-            <div className="gold-divider" />
-            
-            <p className="text-muted-foreground my-6">{product.description}</p>
-            
-            <div className="space-y-6">
-              {/* Color Options */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3">Color</h3>
-                <div className="flex flex-wrap gap-3">
-                  {product.colorVariations.map(color => (
-                    <button
-                      key={color.name}
-                      type="button"
-                      className={`group relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
-                        selectedColor === color.name 
-                          ? 'ring-2 ring-gold ring-offset-2 scale-110' 
-                          : 'hover:scale-105'
-                      }`}
-                      onClick={() => setSelectedColor(color.name)}
-                    >
-                      <span 
-                        className="w-10 h-10 rounded-full" 
-                        style={{ backgroundColor: color.color }}
-                      ></span>
-                      <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                        {color.name}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+            <div className="text-2xl font-semibold mb-2">${product.price.toFixed(2)}</div>
+            {product.compareAtPrice && (
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground line-through">
+                  ${product.compareAtPrice.toFixed(2)}
+                </span>
+                <Badge variant="destructive">
+                  Save ${(product.compareAtPrice - product.price).toFixed(2)}
+                </Badge>
               </div>
-              
-              {/* Size Options */}
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm font-semibold">Size</h3>
-                  <Button variant="link" size="sm" className="text-gold p-0 h-auto">
-                    Size Guide
-                  </Button>
-                </div>
-                <div className="grid grid-cols-4 gap-3">
-                  {product.sizeOptions.map(size => (
-                    <button
-                      key={size}
-                      type="button"
-                      className={`py-2 border rounded-md text-sm transition-all duration-200 ${
-                        selectedSize === size 
-                          ? 'bg-gold text-black border-gold shadow-md shadow-gold/20'
-                          : 'border-gold/30 hover:border-gold/60 hover:bg-gold/10'
-                      }`}
-                      onClick={() => setSelectedSize(size)}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Quantity */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3">Quantity</h3>
-                <div className="flex w-fit border border-gold/30 rounded-md overflow-hidden">
-                  <button
-                    type="button"
-                    className="w-10 h-10 flex items-center justify-center hover:bg-gold/10 transition-colors"
-                    onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    min="1"
-                    value={quantity}
-                    onChange={e => setQuantity(parseInt(e.target.value) || 1)}
-                    className="w-16 h-10 text-center bg-transparent border-x border-gold/30"
-                  />
-                  <button
-                    type="button"
-                    className="w-10 h-10 flex items-center justify-center hover:bg-gold/10 transition-colors"
-                    onClick={() => setQuantity(prev => prev + 1)}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <Button 
-                className="flex-1 bg-gradient-gold text-black hover:shadow-md hover:shadow-gold/30 transition-all" 
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart size={18} className="mr-2" /> Add to Cart
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex-1 border-gold/40 hover:bg-gold/10" 
-                onClick={handleAddToWishlist}
-              >
-                <Heart size={18} className="mr-2" /> Add to Wishlist
-              </Button>
-            </div>
+            )}
           </div>
           
-          {/* Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="gold-glass-panel p-4 rounded-lg flex flex-col items-center text-center">
-              <Shield className="text-gold mb-2" size={24} />
-              <h4 className="font-medium mb-1">Lifetime Warranty</h4>
-              <p className="text-xs text-muted-foreground">All our pieces come with a lifetime warranty</p>
+          <Separator className="my-6" />
+          
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-medium mb-2">Description</h3>
+              <p className="text-muted-foreground">{product.description}</p>
             </div>
-            <div className="gold-glass-panel p-4 rounded-lg flex flex-col items-center text-center">
-              <RotateCcw className="text-gold mb-2" size={24} />
-              <h4 className="font-medium mb-1">30-Day Returns</h4>
-              <p className="text-xs text-muted-foreground">Not satisfied? Return within 30 days</p>
+            
+            <div>
+              <h3 className="font-medium mb-2">Specifications</h3>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li><span className="font-medium text-foreground">Metal Type:</span> {product.metalType}</li>
+                {product.stoneSize && <li><span className="font-medium text-foreground">Stone Size:</span> {product.stoneSize}</li>}
+                {product.stoneCut && <li><span className="font-medium text-foreground">Stone Cut:</span> {product.stoneCut}</li>}
+                {product.bandWidth && <li><span className="font-medium text-foreground">Band Width:</span> {product.bandWidth}</li>}
+              </ul>
             </div>
-            <div className="gold-glass-panel p-4 rounded-lg flex flex-col items-center text-center">
-              <Award className="text-gold mb-2" size={24} />
-              <h4 className="font-medium mb-1">Certified Quality</h4>
-              <p className="text-xs text-muted-foreground">All stones are certified for quality</p>
+            
+            <div>
+              <h3 className="font-medium mb-3">Quantity</h3>
+              <div className="flex items-center w-32 border border-input rounded-md">
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="icon"
+                  className="rounded-none"
+                  onClick={decrementQuantity}
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="w-4 h-4" />
+                </Button>
+                <input
+                  type="number"
+                  className="w-full text-center bg-transparent border-0 focus:ring-0"
+                  value={quantity}
+                  readOnly
+                />
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="icon"
+                  className="rounded-none"
+                  onClick={incrementQuantity}
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                onClick={handleAddToCart}
+                className="flex-1 gap-2"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Add to Cart
+              </Button>
+              
+              <Button 
+                onClick={handleAddToWishlist}
+                variant="outline" 
+                className="gap-2"
+              >
+                <Heart className="w-4 h-4" />
+                Add to Wishlist
+              </Button>
+            </div>
+            
+            <div className="bg-secondary/30 rounded-lg p-4">
+              <div className="flex items-start gap-3 mb-2">
+                <ShieldCheck className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Lifetime Warranty</h4>
+                  <p className="text-sm text-muted-foreground">We stand behind our products with a comprehensive lifetime warranty.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Free Shipping & Returns</h4>
+                  <p className="text-sm text-muted-foreground">Enjoy free shipping on all orders and easy returns within 30 days.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Share className="w-4 h-4" />
+              </Button>
+              <span className="text-sm text-muted-foreground">Share this product</span>
             </div>
           </div>
         </div>
       </div>
       
       {/* Product Tabs */}
-      <div className="mt-16 futuristic-panel p-8 rounded-xl">
-        <Tabs defaultValue="description">
-          <TabsList className="w-full grid grid-cols-4 mb-8 bg-transparent border border-gold/20 rounded-lg overflow-hidden">
-            <TabsTrigger 
-              value="description" 
-              className="data-[state=active]:bg-gold data-[state=active]:text-black data-[state=active]:shadow-none"
-            >
-              Description
-            </TabsTrigger>
-            <TabsTrigger 
-              value="specifications" 
-              className="data-[state=active]:bg-gold data-[state=active]:text-black data-[state=active]:shadow-none"
-            >
-              Specifications
-            </TabsTrigger>
-            <TabsTrigger 
-              value="reviews" 
-              className="data-[state=active]:bg-gold data-[state=active]:text-black data-[state=active]:shadow-none"
-            >
-              Reviews
-            </TabsTrigger>
-            <TabsTrigger 
-              value="care" 
-              className="data-[state=active]:bg-gold data-[state=active]:text-black data-[state=active]:shadow-none"
-            >
-              Care & Warranty
-            </TabsTrigger>
+      <div className="mb-16">
+        <Tabs defaultValue="details">
+          <TabsList className="w-full justify-start mb-8">
+            <TabsTrigger value="details">Details & Specs</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews ({product.reviews.length})</TabsTrigger>
+            <TabsTrigger value="shipping">Shipping & Returns</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="description" className="space-y-4 animate-fade-in">
-            <div className="gold-accent">
-              <h3 className="text-lg font-semibold">Product Description</h3>
-              <p className="mt-2">{product.description}</p>
-              <p className="mt-4">Our moissanite stones are ethically sourced and lab-created to provide exceptional beauty without environmental impact.</p>
+          <TabsContent value="details" className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Product Details</h3>
+              <p className="text-muted-foreground">{product.longDescription || product.description}</p>
             </div>
             
-            <div className="mt-6">
-              <h4 className="font-medium mb-2">Highlights</h4>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <Info size={18} className="text-gold flex-shrink-0 mt-0.5" />
-                  <span>Superior clarity and brilliance that rivals natural diamonds</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Info size={18} className="text-gold flex-shrink-0 mt-0.5" />
-                  <span>Ethically created in a controlled laboratory environment</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Info size={18} className="text-gold flex-shrink-0 mt-0.5" />
-                  <span>More durable than other diamond alternatives with a hardness of 9.25 on the Mohs scale</span>
-                </li>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Materials</h3>
+              <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                <li>Primary Stone: Moissanite</li>
+                <li>Metal: {product.metalType}</li>
+                {product.accentStones && <li>Accent Stones: {product.accentStones}</li>}
               </ul>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="specifications" className="space-y-4 animate-fade-in">
-            <h3 className="text-lg font-semibold mb-4">Product Specifications</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="gold-glass-panel p-6 rounded-lg">
-                <h4 className="font-medium mb-4 text-gold">Stone Details</h4>
-                <table className="w-full">
-                  <tbody>
-                    <tr className="border-b border-gold/10">
-                      <td className="py-2 font-medium">Type</td>
-                      <td className="py-2">{product.moissaniteType}</td>
-                    </tr>
-                    <tr className="border-b border-gold/10">
-                      <td className="py-2 font-medium">Cut</td>
-                      <td className="py-2">{product.moissaniteCut}</td>
-                    </tr>
-                    <tr className="border-b border-gold/10">
-                      <td className="py-2 font-medium">Clarity</td>
-                      <td className="py-2">VVS1-VVS2 Equivalent</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 font-medium">Hardness</td>
-                      <td className="py-2">9.25 on Mohs Scale</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className="gold-glass-panel p-6 rounded-lg">
-                <h4 className="font-medium mb-4 text-gold">Metal Details</h4>
-                <table className="w-full">
-                  <tbody>
-                    <tr className="border-b border-gold/10">
-                      <td className="py-2 font-medium">Type</td>
-                      <td className="py-2">{product.metalType}</td>
-                    </tr>
-                    <tr className="border-b border-gold/10">
-                      <td className="py-2 font-medium">Finish</td>
-                      <td className="py-2">Polished</td>
-                    </tr>
-                    <tr className="border-b border-gold/10">
-                      <td className="py-2 font-medium">Stamps</td>
-                      <td className="py-2">14K, 18K or PT950 (Depending on selection)</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 font-medium">Weight</td>
-                      <td className="py-2">Varies by size</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="reviews" className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Customer Reviews</h3>
-              <Button>Write a Review</Button>
-            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-              <div className="gold-glass-panel p-6 rounded-lg">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star 
-                        key={star}
-                        size={20}
-                        fill={averageRating >= star ? "#D4AF37" : "none"}
-                        className="text-gold"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-lg font-semibold">
-                    {averageRating.toFixed(1)} out of 5
-                  </span>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Specifications</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                <div className="flex justify-between py-2 border-b">
+                  <span className="font-medium">Category</span>
+                  <span className="text-muted-foreground">{product.category}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Based on {product.reviews.length} {product.reviews.length === 1 ? 'review' : 'reviews'}
-                </p>
-                
-                {/* Rating breakdown */}
-                <div className="mt-4 space-y-2">
-                  {[5, 4, 3, 2, 1].map(rating => {
-                    const count = product.reviews.filter(r => r.rating === rating).length;
-                    const percentage = product.reviews.length > 0 ? (count / product.reviews.length) * 100 : 0;
-                    return (
-                      <div key={rating} className="flex items-center gap-2">
-                        <div className="w-8 text-sm">{rating} ★</div>
-                        <div className="flex-grow h-2 bg-secondary rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gold"
-                            style={{ width: `${percentage}%` }}
-                          ></div>
-                        </div>
-                        <div className="w-8 text-sm text-right">{count}</div>
-                      </div>
-                    );
-                  })}
+                <div className="flex justify-between py-2 border-b">
+                  <span className="font-medium">Metal Type</span>
+                  <span className="text-muted-foreground">{product.metalType}</span>
                 </div>
-              </div>
-              
-              <div className="space-y-4">
-                {product.reviews.length > 0 ? (
-                  product.reviews.map(review => (
-                    <div key={review.id} className="gold-glass-panel p-5 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{review.author}</h4>
-                        <span className="text-xs text-muted-foreground">{review.date}</span>
-                      </div>
-                      <div className="flex mb-2">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star 
-                            key={star}
-                            size={14}
-                            fill={review.rating >= star ? "#D4AF37" : "none"}
-                            className="text-gold"
-                          />
-                        ))}
-                      </div>
-                      <p className="text-sm">{review.comment}</p>
-                      {review.verified && (
-                        <div className="mt-2 inline-flex items-center gap-1 text-xs bg-gold/10 text-gold px-2 py-0.5 rounded-full">
-                          <Shield size={10} /> Verified Purchase
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">No reviews yet. Be the first to review this product!</p>
+                {product.stoneSize && (
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="font-medium">Stone Size</span>
+                    <span className="text-muted-foreground">{product.stoneSize}</span>
                   </div>
                 )}
+                {product.stoneCut && (
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="font-medium">Stone Cut</span>
+                    <span className="text-muted-foreground">{product.stoneCut}</span>
+                  </div>
+                )}
+                {product.bandWidth && (
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="font-medium">Band Width</span>
+                    <span className="text-muted-foreground">{product.bandWidth}</span>
+                  </div>
+                )}
+                <div className="flex justify-between py-2 border-b">
+                  <span className="font-medium">Product ID</span>
+                  <span className="text-muted-foreground">{product.id}</span>
+                </div>
               </div>
             </div>
           </TabsContent>
           
-          <TabsContent value="care" className="space-y-6 animate-fade-in">
+          <TabsContent value="reviews">
+            {product.reviews.length > 0 ? (
+              <div className="space-y-6">
+                <div className="flex items-center mb-6">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold mb-1">Customer Reviews</h3>
+                    <div className="flex items-center">
+                      <div className="flex mr-2">
+                        {renderStars(product.rating)}
+                      </div>
+                      <span>Based on {product.reviews.length} reviews</span>
+                    </div>
+                  </div>
+                  <Button>Write a Review</Button>
+                </div>
+                
+                {product.reviews.map((review, index) => (
+                  <div key={index} className="border-b pb-6">
+                    <div className="flex items-center mb-2">
+                      <div className="flex mr-2">
+                        {renderStars(review.rating)}
+                      </div>
+                      <h4 className="font-medium">{review.title}</h4>
+                    </div>
+                    <p className="mb-2 text-muted-foreground">{review.content}</p>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <span>{review.author}</span>
+                      <span className="mx-2">•</span>
+                      <span>{new Date(review.date).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <h3 className="text-lg font-medium mb-2">No Reviews Yet</h3>
+                <p className="text-muted-foreground mb-6">Be the first to review this product</p>
+                <Button>Write a Review</Button>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="shipping">
             <div className="space-y-6">
-              <div className="gold-accent">
-                <h3 className="text-lg font-semibold">Care Instructions</h3>
-                <p className="mt-2">{product.careInstructions}</p>
-              </div>
-              
-              <ul className="space-y-4 mt-4">
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-gold text-sm">1</span>
-                  </div>
-                  <div>
-                    <p className="font-medium">Regular Cleaning</p>
-                    <p className="text-sm text-muted-foreground">
-                      Clean your jewelry with a soft cloth and mild soap in warm water. Gently scrub with a soft toothbrush to remove any buildup in crevices.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-gold text-sm">2</span>
-                  </div>
-                  <div>
-                    <p className="font-medium">Proper Storage</p>
-                    <p className="text-sm text-muted-foreground">
-                      Store your jewelry separately to prevent scratching. Consider using a jewelry box with separate compartments.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-gold text-sm">3</span>
-                  </div>
-                  <div>
-                    <p className="font-medium">Avoid Chemicals</p>
-                    <p className="text-sm text-muted-foreground">
-                      Remove jewelry before swimming, bathing, or using household cleaners and chemicals.
-                    </p>
-                  </div>
-                </li>
-              </ul>
-              
-              <div className="gold-accent mt-8">
-                <h3 className="text-lg font-semibold">Warranty Information</h3>
-                <p className="mt-2">{product.warrantyInfo}</p>
-              </div>
-              
-              <div className="gold-glass-panel p-6 rounded-lg mt-6">
-                <h4 className="font-medium mb-3 text-gold">Our Warranty Covers:</h4>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <CircleDot size={16} className="text-gold flex-shrink-0 mt-1" />
-                    <span>Manufacturing defects</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CircleDot size={16} className="text-gold flex-shrink-0 mt-1" />
-                    <span>Stone loosening due to normal wear</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CircleDot size={16} className="text-gold flex-shrink-0 mt-1" />
-                    <span>Prong repairs and replacements</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CircleDot size={16} className="text-gold flex-shrink-0 mt-1" />
-                    <span>Free cleaning and inspection</span>
-                  </li>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Shipping Information</h3>
+                <p className="text-muted-foreground mb-2">
+                  We offer free shipping on all orders within the United States. International shipping rates vary based on location.
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                  <li>Domestic orders: 2-5 business days</li>
+                  <li>International orders: 7-14 business days</li>
+                  <li>Express shipping options available at checkout</li>
                 </ul>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Return Policy</h3>
+                <p className="text-muted-foreground mb-2">
+                  We want you to be completely satisfied with your purchase. If you're not, you may return it within 30 days of receipt.
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                  <li>Items must be unworn and in original packaging</li>
+                  <li>Custom pieces are non-returnable</li>
+                  <li>Return shipping is free for domestic orders</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Warranty</h3>
+                <p className="text-muted-foreground">
+                  All our jewelry comes with a comprehensive lifetime warranty against manufacturing defects. This includes free prong tightening, re-polishing, and rhodium plating (for white gold pieces).
+                </p>
               </div>
             </div>
           </TabsContent>
         </Tabs>
       </div>
       
-      {/* Related Products Section */}
+      {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <div className="mt-16">
-          <h2 className="text-2xl font-semibold mb-8">You Might Also Like</h2>
+        <div>
+          <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map(relatedProduct => (
-              <ProductCard key={relatedProduct.id} product={relatedProduct} />
+            {relatedProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
