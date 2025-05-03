@@ -24,21 +24,21 @@ export default function Home() {
       id: '1',
       author: 'Sarah Johnson',
       rating: 5,
-      comment: 'I absolutely love my moissanite engagement ring! The sparkle is incredible and nobody can tell it's not a diamond. Amazing quality for the price.',
+      comment: "I absolutely love my moissanite engagement ring! The sparkle is incredible and nobody can tell it is not a diamond. Amazing quality for the price.",
       image: 'https://randomuser.me/api/portraits/women/12.jpg'
     },
     {
       id: '2',
       author: 'Michael Brown',
       rating: 5,
-      comment: 'Purchased a pair of earrings for my wife's birthday. She was thrilled with the quality and brilliance. Great customer service too!',
+      comment: "Purchased a pair of earrings for my wife's birthday. She was thrilled with the quality and brilliance. Great customer service too!",
       image: 'https://randomuser.me/api/portraits/men/32.jpg'
     },
     {
       id: '3',
       author: 'Jessica Williams',
       rating: 4,
-      comment: 'The custom necklace I ordered exceeded my expectations. Beautiful craftsmanship and it arrived faster than I expected.',
+      comment: "The custom necklace I ordered exceeded my expectations. Beautiful craftsmanship and it arrived faster than I expected.",
       image: 'https://randomuser.me/api/portraits/women/45.jpg'
     }
   ];
@@ -198,7 +198,7 @@ export default function Home() {
           <div className="relative">
             <div className="rounded-lg overflow-hidden gold-glow">
               <img
-                src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8ZGlhbW9uZCUyMG5lY2tsYWNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60"
+                src="https://images.unsplash.com/photo-1600721391689-2564bb8055de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
                 alt="Jewelry craftsmanship"
                 className="w-full h-full object-cover"
               />
