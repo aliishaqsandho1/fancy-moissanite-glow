@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { products } from '@/data/siteData';
+import { allProducts as products } from '@/data/siteData';
 
 export default function Home() {
   const featuredProducts = products.filter(product => product.featured).slice(0, 3);
