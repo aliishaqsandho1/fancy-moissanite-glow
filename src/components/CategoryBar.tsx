@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { Gift, Ring, Diamond, Earring, Users, Heart, Necklace, Bracelet, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { categories } from '@/data/siteData';
 
@@ -23,11 +23,64 @@ interface Category {
 interface CategoryBarProps {
   activeCategory?: string;
   className?: string;
+  vertical?: boolean;
 }
 
-export default function CategoryBar({ activeCategory, className }: CategoryBarProps) {
+export default function CategoryBar({ activeCategory, className, vertical = false }: CategoryBarProps) {
   // Cast our categories to match the expected interface
   const allCategories = categories as Category[];
+  
+  const getCategoryIcon = (slug: string) => {
+    switch (slug.toLowerCase()) {
+      case 'gifts':
+        return <Gift className="mr-2 h-4 w-4" />;
+      case 'rings':
+        return <Ring className="mr-2 h-4 w-4" />;
+      case 'wedding':
+        return <Diamond className="mr-2 h-4 w-4" />;
+      case 'engagement':
+        return <Diamond className="mr-2 h-4 w-4" />;
+      case 'earrings':
+        return <Earring className="mr-2 h-4 w-4" />;
+      case 'couples':
+        return <Users className="mr-2 h-4 w-4" />;
+      case 'custom':
+        return <Heart className="mr-2 h-4 w-4" />;
+      case 'necklaces':
+        return <Necklace className="mr-2 h-4 w-4" />;
+      case 'bracelets':
+        return <Bracelet className="mr-2 h-4 w-4" />;
+      case 'men':
+        return <User className="mr-2 h-4 w-4" />;
+      default:
+        return null;
+    }
+  };
+  
+  if (vertical) {
+    return (
+      <div className={cn("flex flex-col bg-amber-400 rounded-lg", className)}>
+        <div className="flex flex-col w-full">
+          {allCategories.map((category) => (
+            <Link
+              key={category.slug}
+              to={`/category/${category.slug}`}
+              className={cn(
+                "flex items-center py-3 px-4 hover:bg-amber-500 transition-colors",
+                activeCategory === category.slug
+                  ? "bg-amber-500 font-medium"
+                  : ""
+              )}
+            >
+              {getCategoryIcon(category.slug)}
+              <span>{category.name}</span>
+              <span className="ml-auto">›</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className={cn("overflow-x-auto", className)}>

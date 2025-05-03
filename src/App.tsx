@@ -36,6 +36,7 @@ import Careers from "./pages/Careers";
 import IndustryPartners from "./pages/IndustryPartners";
 import PressRoom from "./pages/PressRoom";
 import ShippingInfo from "./pages/ShippingInfo";
+import Account from "./pages/Account";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -69,6 +70,10 @@ const App = () => {
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/thank-you" element={<ThankYou />} />
+                  
+                  {/* Account routes */}
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/account/:section" element={<Account />} />
                   
                   {/* New routes */}
                   <Route path="/gift-guide" element={<GiftGuide />} />

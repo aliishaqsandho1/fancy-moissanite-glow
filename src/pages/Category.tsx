@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Slider } from '@/components/ui/slider';
@@ -5,28 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import ProductCard from '@/components/ProductCard';
-import { categories, allProducts } from '@/data/siteData';
-
-// Extended product interface to satisfy ProductCard component
-interface ExtendedProduct {
-  id: string;
-  category: string;
-  price: number;
-  metalType: string;
-  createdAt: string;
-  name: string;
-  description: string;
-  images: string[];
-  rating: number;
-  reviews: Array<any>;
-  soldCount: number;
-  compareAtPrice?: number;
-  isNew: boolean;
-  featured?: boolean;
-  stoneSize?: string;
-  stoneCut?: string;
-  bandWidth?: string;
-}
+import { categories, getProductsByCategory } from '@/data/siteData';
+import { Product } from '@/types/api';
 
 export default function Category() {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -40,10 +21,8 @@ export default function Category() {
     description: "Browse our collection",
   };
 
-  // Filter products by category
-  const categoryProducts = allProducts.filter(p => 
-    categoryId ? p.category.toLowerCase() === categoryId.toLowerCase() : true
-  ) as ExtendedProduct[];
+  // Get products for this category
+  const categoryProducts = getProductsByCategory(categoryId);
   
   const metalTypes = Array.from(new Set(categoryProducts.map(p => p.metalType)));
   
