@@ -11,52 +11,7 @@ import {
   User,
   Tag
 } from "lucide-react";
-
-// Blog post data (in a real app, this would be fetched from an API)
-const blogPosts = [
-  {
-    id: "1",
-    title: "The Science Behind Moissanite's Brilliance",
-    content: [
-      "Moissanite is one of the most brilliant gemstones available today, outshining even diamonds in terms of fire and sparkle. But what exactly gives moissanite its spectacular visual properties?",
-      "The brilliance of a gemstone is determined by its refractive index (RI) - a measure of how light bends as it passes through the stone. Moissanite has an RI of 2.65-2.69, significantly higher than diamond's 2.42. This higher refractive index is the primary reason moissanite displays more brilliance and fire than a diamond of equivalent size and cut.",
-      "When light enters a moissanite stone, it slows down more dramatically than it would in a diamond due to the higher density of the crystal structure. This slowing effect causes light to bend more sharply, creating the distinctive flashes of rainbow colors (dispersion) that moissanite is famous for. In fact, moissanite has 2.4 times the dispersion of diamond, resulting in those captivating flashes of color that dance across the stone as it moves.",
-      "The crystal structure of moissanite (silicon carbide) is hexagonal, differing from diamond's cubic structure. This arrangement of atoms affects how light travels through and exits the stone. Expert cutting takes advantage of this unique structure to maximize the stone's natural optical properties, carefully positioning facets to create ideal light reflection and refraction patterns.",
-      "Additionally, moissanite is pleochroic, meaning it can display different colors when viewed from different angles. This property adds another dimension of visual interest not present in diamonds.",
-      "Modern moissanite is typically grown in controlled laboratory environments, allowing scientists to optimize growth conditions for clarity and color. The highest quality moissanite stones, like those used in our FANCY MOISSANITE collections, are virtually colorless and flawless, further enhancing their exceptional optical performance.",
-      "The combination of higher refractive index, greater dispersion, and expert cutting is what gives moissanite its extraordinary brilliance - a fiery, dazzling display that maintains its sparkle even in low lighting conditions and continues to captivate jewelry enthusiasts around the world."
-    ],
-    excerpt: "Discover why moissanite has more fire and sparkle than diamonds and how its unique properties create unmatched brilliance.",
-    date: "2023-12-10",
-    author: "Dr. Emma Richardson",
-    category: "Education",
-    tags: ["Moissanite", "Gemstones", "Science", "Brilliance"],
-    image: "https://images.unsplash.com/photo-1600267185393-e158a98703de?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8ZGlhbW9uZCUyMHNwYXJrbGV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
-    featured: true,
-    relatedPosts: ["2", "4", "7"]
-  },
-  {
-    id: "2",
-    title: "Ethical Gemstones: Why Lab-Created is the Future",
-    content: [
-      "The jewelry industry is undergoing a significant transformation as consumers become increasingly conscious of the ethical and environmental implications of their purchases. Lab-created gemstones, particularly moissanite, are at the forefront of this revolution.",
-      "Traditional diamond mining has long been associated with serious ethical concerns. Despite efforts like the Kimberley Process, fully tracking a natural diamond's origins remains challenging. Issues like poor working conditions, child labor, and funding of conflicts continue to plague parts of the industry.",
-      "The environmental impact of diamond mining is equally concerning. Large-scale operations often result in habitat destruction, soil erosion, deforestation, and water pollution. A single one-carat diamond typically requires the removal of 250 tons of earth, uses approximately 127 gallons of water, and generates 143 pounds of carbon dioxide emissions.",
-      "Lab-created moissanite offers a compelling alternative. Created in controlled laboratory environments, these gemstones eliminate concerns about unethical mining practices. The controlled production process ensures that every stone can be traced to its source, providing complete transparency that's often impossible with mined stones.",
-      "From an environmental perspective, lab-created moissanite has a significantly smaller footprint. The production process requires less water and energy, produces fewer emissions, and causes no habitat destruction. As manufacturing technologies continue to advance, these environmental benefits will likely increase even further.",
-      "Beyond ethics and sustainability, lab-created moissanite is also more accessible. Costing approximately 80-90% less than comparable diamonds, these gemstones democratize luxury, allowing more people to enjoy exceptional brilliance without compromise.",
-      "As consumer values evolve and technology advances, lab-created gemstones like moissanite represent not just an alternative to traditional mined stones, but the future of the jewelry industry - a future that aligns with our collective desire for beauty, quality, ethics, and sustainability."
-    ],
-    excerpt: "Learn about the environmental and ethical advantages of choosing lab-created moissanite over mined diamonds.",
-    date: "2023-11-22",
-    author: "Michael Chen",
-    category: "Sustainability",
-    tags: ["Ethics", "Sustainability", "Lab-Created", "Environment"],
-    image: "https://images.unsplash.com/photo-1619468129361-605ebea04b44?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGxhYm9yYXRvcnl8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60",
-    featured: true,
-    relatedPosts: ["1", "3", "7"]
-  },
-];
+import { blogPosts } from "@/data/siteData";
 
 // Function to get post data
 const getPostData = (id: string) => {

@@ -4,17 +4,17 @@ import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Heart, ArrowLeft, Star, ShoppingCart, Share, Info, Shield, Award, RotateCcw, CircleDot } from 'lucide-react';
-import products from '@/data/products';
+import { getProductById, getRelatedProducts } from '@/data/products';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   
-  const product = products.find(p => p.id === id);
+  const product = getProductById(id || "");
   
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(product?.colorVariations[0].name || '');
+  const [selectedColor, setSelectedColor] = useState(product?.colorVariations[0]?.name || '');
   const [selectedSize, setSelectedSize] = useState(product?.sizeOptions[0] || '');
   const [quantity, setQuantity] = useState(1);
 
@@ -29,6 +29,8 @@ export default function ProductDetail() {
       </div>
     );
   }
+
+  const relatedProducts = getRelatedProducts(product.id, 4);
 
   const handleAddToCart = () => {
     toast({
@@ -521,6 +523,18 @@ export default function ProductDetail() {
           </TabsContent>
         </Tabs>
       </div>
+      
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-16">
+          <h2 className="text-2xl font-semibold mb-8">You Might Also Like</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedProducts.map(relatedProduct => (
+              <ProductCard key={relatedProduct.id} product={relatedProduct} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

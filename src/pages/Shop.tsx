@@ -5,15 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import ProductCard from '@/components/ProductCard';
-import products from '@/data/products';
+import allProducts from '@/data/products';
+import { getProductsByCategory } from '@/data/siteData';
 
 export default function Shop() {
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMetals, setSelectedMetals] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState("featured");
 
-  const categories = Array.from(new Set(products.map(p => p.category)));
-  const metalTypes = Array.from(new Set(products.map(p => p.metalType)));
+  // Get unique categories and metal types
+  const categories = Array.from(new Set(allProducts.map(p => p.category)));
+  const metalTypes = Array.from(new Set(allProducts.map(p => p.metalType)));
   
   const handleCategoryChange = (category: string) => {
     setSelectedCategories(prev => 
@@ -31,12 +34,27 @@ export default function Shop() {
     );
   };
   
-  const filteredProducts = products.filter(product => {
+  // Apply filters
+  const filteredProducts = allProducts.filter(product => {
     const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
     const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(product.category);
     const matchesMetal = selectedMetals.length === 0 || selectedMetals.includes(product.metalType);
     
     return matchesPrice && matchesCategory && matchesMetal;
+  });
+
+  // Apply sorting
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortOption) {
+      case "price-low":
+        return a.price - b.price;
+      case "price-high":
+        return b.price - a.price;
+      case "newest":
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      default:
+        return 0; // featured - no specific sorting
+    }
   });
 
   return (
@@ -105,6 +123,7 @@ export default function Shop() {
               setPriceRange([0, 2000]);
               setSelectedCategories([]);
               setSelectedMetals([]);
+              setSortOption("featured");
             }}
           >
             Reset Filters
@@ -115,9 +134,13 @@ export default function Shop() {
         <div className="flex-1">
           <div className="mb-6 flex justify-between items-center">
             <p className="text-muted-foreground">
-              Showing {filteredProducts.length} of {products.length} products
+              Showing {sortedProducts.length} of {allProducts.length} products
             </p>
-            <select className="fancy-input">
+            <select 
+              className="fancy-input"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
               <option value="featured">Featured</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
@@ -125,9 +148,9 @@ export default function Shop() {
             </select>
           </div>
           
-          {filteredProducts.length > 0 ? (
+          {sortedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map(product => (
+              {sortedProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>

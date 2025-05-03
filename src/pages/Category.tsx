@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Slider } from '@/components/ui/slider';
@@ -6,26 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import ProductCard from '@/components/ProductCard';
 import allProducts from '@/data/products';
-
-// Define category titles and descriptions
-const categoryDetails: Record<string, {title: string, description: string}> = {
-  rings: {
-    title: "Rings Collection",
-    description: "Discover our stunning range of moissanite rings, from classic solitaires to unique designs."
-  },
-  necklaces: {
-    title: "Necklaces Collection",
-    description: "Elegant pendants and statement pieces to elevate your style."
-  },
-  earrings: {
-    title: "Earrings Collection",
-    description: "From subtle studs to dramatic drops, find your perfect pair."
-  },
-  bracelets: {
-    title: "Bracelets Collection",
-    description: "Adorn your wrist with our luxurious moissanite bracelets."
-  }
-};
+import { categories } from '@/data/siteData';
 
 export default function Category() {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -33,10 +15,11 @@ export default function Category() {
   const [selectedMetals, setSelectedMetals] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState("featured");
   
-  // Get category details or fallback to default
-  const categoryDetail = categoryId && categoryDetails[categoryId] 
-    ? categoryDetails[categoryId] 
-    : { title: "Collection", description: "Browse our collection" };
+  // Find category details from centralized data
+  const categoryDetail = categories.find(c => c.slug === categoryId) || {
+    name: categoryId ? categoryId.charAt(0).toUpperCase() + categoryId.slice(1) : "Collection", 
+    description: "Browse our collection",
+  };
 
   // Filter products by category
   const categoryProducts = allProducts.filter(p => 
@@ -69,9 +52,7 @@ export default function Category() {
       case "price-high":
         return b.price - a.price;
       case "newest":
-        // Since createdAt doesn't exist in the Product type, we'll use id as a substitute
-        // Assuming newer products have higher IDs
-        return a.id.localeCompare(b.id) * -1;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       default:
         return 0; // featured - no specific sorting
     }
@@ -88,7 +69,7 @@ export default function Category() {
   return (
     <div className="fancy-container py-16">
       <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">{categoryDetail.title}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-4">{categoryDetail.name}</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">{categoryDetail.description}</p>
       </div>
       
@@ -136,6 +117,7 @@ export default function Category() {
             onClick={() => {
               setPriceRange([0, 2000]);
               setSelectedMetals([]);
+              setSortOption("featured");
             }}
           >
             Reset Filters
